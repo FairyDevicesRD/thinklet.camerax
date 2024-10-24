@@ -1,0 +1,37 @@
+From c6a70af619f8e3bd05d9cc23323840ececaa404e Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sun, 1 Sep 2024 02:23:20 +0900
+Subject: [PATCH 06/11] Define getThinkletMic method
+
+Change-Id: Iae6c79f4bbb7cbabf8b883bef0fb69eab15deafb
+---
+ .../main/java/androidx/camera/video/Recorder.java   | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+index 040af8d7..ffb807fd 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+@@ -711,6 +711,19 @@ public final class Recorder implements VideoOutput {
+         return getObservableData(mMediaSpec).getAudioSpec().getSource();
+     }
+ 
++    // Change for THINKLET :: Start
++    /**
++     * Gets the THINKLET mic currently used by this Recorder.
++     *
++     * @return the value provided to {@link Builder#setThinkletMic(ThinkletMic)} on the builder used
++     * to create this recorder, or null if no value was set.
++     */
++    @Nullable
++    public ThinkletMic getThinkletMic() {
++        return getObservableData(mMediaSpec).getAudioSpec().getThinkletMic();
++    }
++    // Change for THINKLET :: End
++
+     /**
+      * Returns the executor provided to the builder for this recorder.
+      *
+-- 
+2.25.1
+

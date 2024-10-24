@@ -1,0 +1,98 @@
+From 48baea5a84997b29b352c1848dc86ca22ba3f31a Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Wed, 31 Jul 2024 01:08:54 +0900
+Subject: [PATCH 02/11] Create interface to replace with alternative audio
+ setting
+
+Change-Id: I950237d31d14bc7bc568caeaf471347896172432
+---
+ .../ThinkletAudioRecordWrapperFactory.java    | 18 ++++++++++++++
+ .../camerax/ThinkletAudioSettingsPatcher.java | 19 +++++++++++++++
+ .../ai/fd/thinklet/camerax/ThinkletMic.java   | 24 +++++++++++++++++++
+ 3 files changed, 61 insertions(+)
+ create mode 100644 camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
+ create mode 100644 camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+ create mode 100644 camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletMic.java
+
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
+new file mode 100644
+index 00000000..062a6d12
+--- /dev/null
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
+@@ -0,0 +1,18 @@
++package ai.fd.thinklet.camerax;
++
++import android.Manifest;
++
++import androidx.annotation.NonNull;
++import androidx.annotation.RequiresPermission;
++import androidx.camera.video.internal.audio.wrapper.AudioRecordWrapper;
++
++/**
++ * An interface which provides an [AudioRecordWrapper] that uses its own
++ * [android.media.AudioRecord] or an equivalent api.
++ */
++public interface ThinkletAudioRecordWrapperFactory {
++
++    @NonNull
++    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
++    AudioRecordWrapper create(int audioSource, int audioFormat, int channelCount, int sampleRate);
++}
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+new file mode 100644
+index 00000000..c0b33255
+--- /dev/null
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+@@ -0,0 +1,19 @@
++package ai.fd.thinklet.camerax;
++
++import android.util.Range;
++
++import androidx.annotation.NonNull;
++
++/**
++ * A class for overriding the settings in [AudioSettings] according to the THINKLET specific mic
++ * mode.
++ */
++public interface ThinkletAudioSettingsPatcher {
++    int getAudioSource(int defaultSetting);
++
++    int getAudioFormat(int defaultSetting);
++
++    int getChannelCount(int defaultSetting);
++
++    int getSampleRate(@NonNull Range<Integer> audioSpecRange, int defaultSetting);
++}
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletMic.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletMic.java
+new file mode 100644
+index 00000000..256b429d
+--- /dev/null
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletMic.java
+@@ -0,0 +1,24 @@
++package ai.fd.thinklet.camerax;
++
++import androidx.annotation.Nullable;
++
++/**
++ * An interface to define mic settings and other functions to enable THINKLET's own mic functions to
++ * be used in CameraX.
++ */
++public interface ThinkletMic {
++
++    /**
++     * Creates a [AudioSettingsPatcher] to override the [AudioSettings] required to use this mic
++     * type.
++     */
++    @Nullable
++    ThinkletAudioSettingsPatcher getAudioSettingsPatcher();
++
++    /**
++     * Creates a factory of [AudioRecordWrapper].
++     * If `null`, fallback to an implementation that uses the standard [android.media.AudioRecord].
++     */
++    @Nullable
++    ThinkletAudioRecordWrapperFactory getAudioRecordWrapperFactory();
++}
+-- 
+2.25.1
+

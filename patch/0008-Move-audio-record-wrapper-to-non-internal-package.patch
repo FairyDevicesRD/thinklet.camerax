@@ -1,0 +1,72 @@
+From 72adb5843d708d4c7d294006e6906b927f868b86 Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sun, 1 Sep 2024 02:25:49 +0900
+Subject: [PATCH 08/11] Move audio record wrapper to non-internal package
+
+Change-Id: I149c99fc3fed1ae6d6778f363cea916f8a934d4b
+---
+ .../thinklet/camerax/ThinkletAudioRecordWrapperFactory.java   | 2 +-
+ .../{internal => }/audio/wrapper/AudioRecordWrapper.java      | 2 +-
+ .../audio/wrapper/DefaultAudioRecordWrapper.java              | 2 +-
+ .../androidx/camera/video/internal/audio/AudioStreamImpl.java | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+ rename camera/camera-video/src/main/java/androidx/camera/video/{internal => }/audio/wrapper/AudioRecordWrapper.java (96%)
+ rename camera/camera-video/src/main/java/androidx/camera/video/{internal => }/audio/wrapper/DefaultAudioRecordWrapper.java (97%)
+
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
+index 062a6d12..52c7f56c 100644
+--- a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioRecordWrapperFactory.java
+@@ -4,7 +4,7 @@ import android.Manifest;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.RequiresPermission;
+-import androidx.camera.video.internal.audio.wrapper.AudioRecordWrapper;
++import androidx.camera.video.audio.wrapper.AudioRecordWrapper;
+ 
+ /**
+  * An interface which provides an [AudioRecordWrapper] that uses its own
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/AudioRecordWrapper.java b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/AudioRecordWrapper.java
+similarity index 96%
+rename from camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/AudioRecordWrapper.java
+rename to camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/AudioRecordWrapper.java
+index a9042252..108534ee 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/AudioRecordWrapper.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/AudioRecordWrapper.java
+@@ -1,4 +1,4 @@
+-package androidx.camera.video.internal.audio.wrapper;
++package androidx.camera.video.audio.wrapper;
+ 
+ import android.media.AudioManager;
+ import android.media.AudioRecordingConfiguration;
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/DefaultAudioRecordWrapper.java b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
+similarity index 97%
+rename from camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/DefaultAudioRecordWrapper.java
+rename to camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
+index 61baabaf..86ebcd39 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/wrapper/DefaultAudioRecordWrapper.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
+@@ -1,4 +1,4 @@
+-package androidx.camera.video.internal.audio.wrapper;
++package androidx.camera.video.audio.wrapper;
+ 
+ import android.media.AudioManager;
+ import android.media.AudioRecord;
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
+index d567a8e0..7eee8cf1 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
+@@ -41,8 +41,8 @@ import androidx.annotation.RequiresApi;
+ import androidx.annotation.RequiresPermission;
+ import androidx.camera.core.Logger;
+ // Change for THINKLET :: Start
+-import androidx.camera.video.internal.audio.wrapper.AudioRecordWrapper;
+-import androidx.camera.video.internal.audio.wrapper.DefaultAudioRecordWrapper;
++import androidx.camera.video.audio.wrapper.AudioRecordWrapper;
++import androidx.camera.video.audio.wrapper.DefaultAudioRecordWrapper;
+ // Change for THINKLET :: End
+ import androidx.camera.video.internal.compat.Api23Impl;
+ import androidx.camera.video.internal.compat.Api24Impl;
+-- 
+2.25.1
+

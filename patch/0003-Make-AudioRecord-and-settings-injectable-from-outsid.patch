@@ -1,0 +1,231 @@
+From b125a70d3aba2d1c42703ce4a70ec99c3015978e Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Wed, 31 Jul 2024 01:10:40 +0900
+Subject: [PATCH 03/11] Make AudioRecord and settings injectable from outside
+
+Change-Id: Idab37ea8ee279343a2963904836e4b7092bb0359
+---
+ .../java/androidx/camera/video/AudioSpec.java | 17 ++++++++++
+ .../java/androidx/camera/video/Recorder.java  | 12 +++++++
+ .../video/internal/audio/AudioSettings.java   | 18 +++++++++++
+ .../video/internal/audio/AudioStreamImpl.java | 14 +++++++++
+ .../AudioSettingsAudioProfileResolver.java    | 31 ++++++++++++++++++-
+ 5 files changed, 91 insertions(+), 1 deletion(-)
+
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/AudioSpec.java b/camera/camera-video/src/main/java/androidx/camera/video/AudioSpec.java
+index 79511ea8..bd3c90d9 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/AudioSpec.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/AudioSpec.java
+@@ -22,6 +22,9 @@ import android.util.Range;
+ 
+ import androidx.annotation.IntDef;
+ import androidx.annotation.NonNull;
++// Change for THINKLET :: Start
++import androidx.annotation.Nullable;
++// Change for THINKLET :: End
+ import androidx.annotation.RestrictTo;
+ import androidx.annotation.RestrictTo.Scope;
+ 
+@@ -30,6 +33,10 @@ import com.google.auto.value.AutoValue;
+ import java.lang.annotation.Retention;
+ import java.lang.annotation.RetentionPolicy;
+ 
++// Change for THINKLET :: Start
++import ai.fd.thinklet.camerax.ThinkletMic;
++// Change for THINKLET :: End
++
+ /**
+  * Audio specification that is options to config audio source and encoding.
+  */
+@@ -142,6 +149,11 @@ public abstract class AudioSpec {
+     @Source
+     public abstract int getSource();
+ 
++    // Change for THINKLET :: Start
++    @Nullable
++    public abstract ThinkletMic getThinkletMic();
++    // Change for THINKLET :: End
++
+     /** Gets the sample bitrate. */
+     @NonNull
+     public abstract Range<Integer> getSampleRate();
+@@ -201,6 +213,11 @@ public abstract class AudioSpec {
+         @NonNull
+         public abstract Builder setSource(@Source int source);
+ 
++        // Change for THINKLET :: Start
++        @NonNull
++        public abstract Builder setThinkletMic(@NonNull ThinkletMic thinkletMic);
++        // Change for THINKLET :: End
++
+         /**
+          * Sets the desired range of sample rates to be used by the encoder.
+          *
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+index 12507615..040af8d7 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+@@ -128,6 +128,10 @@ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicReference;
+ 
++// Change for THINKLET :: Start
++import ai.fd.thinklet.camerax.ThinkletMic;
++// Change for THINKLET :: End
++
+ /**
+  * An implementation of {@link VideoOutput} for starting video recordings that are saved
+  * to a {@link File}, {@link ParcelFileDescriptor}, or {@link MediaStore}.
+@@ -3561,6 +3565,14 @@ public final class Recorder implements VideoOutput {
+             return this;
+         }
+ 
++        // Change for THINKLET :: Start
++        @NonNull
++        public Builder setThinkletMic(@NonNull ThinkletMic thinkletMic) {
++            mMediaSpecBuilder.configureAudio(builder -> builder.setThinkletMic(thinkletMic));
++            return this;
++        }
++        // Change for THINKLET :: End
++
+         @RestrictTo(RestrictTo.Scope.LIBRARY)
+         @NonNull
+         Builder setVideoEncoderFactory(@NonNull EncoderFactory videoEncoderFactory) {
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioSettings.java b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioSettings.java
+index aaed67f7..bbba1e00 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioSettings.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioSettings.java
+@@ -21,6 +21,9 @@ import android.media.AudioFormat;
+ 
+ import androidx.annotation.IntRange;
+ import androidx.annotation.NonNull;
++// Change for THINKLET :: Start
++import androidx.annotation.Nullable;
++// Change for THINKLET :: End
+ 
+ import com.google.auto.value.AutoValue;
+ 
+@@ -28,6 +31,10 @@ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.List;
+ 
++// Change for THINKLET :: Start
++import ai.fd.thinklet.camerax.ThinkletAudioRecordWrapperFactory;
++// Change for THINKLET :: End
++
+ /**
+  * Settings required to configure the audio source.
+  */
+@@ -81,6 +88,11 @@ public abstract class AudioSettings {
+      */
+     public abstract int getAudioFormat();
+ 
++    // Change for THINKLET :: Start
++    @Nullable
++    public abstract ThinkletAudioRecordWrapperFactory getThinkletAudioRecordWrapperFactory();
++    // Change for THINKLET :: End
++
+     // Should not be instantiated directly
+     AudioSettings() {
+     }
+@@ -124,6 +136,12 @@ public abstract class AudioSettings {
+         @NonNull
+         public abstract Builder setAudioFormat(int audioFormat);
+ 
++        // Change for THINKLET :: Start
++        @NonNull
++        public abstract Builder setThinkletAudioRecordWrapperFactory(
++                @Nullable ThinkletAudioRecordWrapperFactory factory);
++        // Change for THINKLET :: End
++
+         abstract AudioSettings autoBuild(); // Actual build method. Not public.
+ 
+         /**
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
+index 522ee2c2..d567a8e0 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/internal/audio/AudioStreamImpl.java
+@@ -59,6 +59,9 @@ import java.util.concurrent.Executor;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicReference;
+ 
++// Change for THINKLET :: Start
++import ai.fd.thinklet.camerax.ThinkletAudioRecordWrapperFactory;
++// Change for THINKLET :: End
+ /**
+  * An AudioStream implementation backed by {@link AudioRecord}.
+  *
+@@ -306,6 +309,17 @@ public class AudioStreamImpl implements AudioStream {
+     private static AudioRecordWrapper createAudioRecord(int bufferSizeInByte,
+             // Change for THINKLET :: End
+             @NonNull AudioSettings settings, @Nullable Context context) {
++        // Change for THINKLET :: Start
++        ThinkletAudioRecordWrapperFactory audioRecordWrapperFactory =
++                settings.getThinkletAudioRecordWrapperFactory();
++        if (audioRecordWrapperFactory != null) {
++            return audioRecordWrapperFactory.create(
++                    settings.getAudioSource(),
++                    settings.getAudioFormat(),
++                    settings.getChannelCount(),
++                    settings.getSampleRate());
++        }
++        // Change for THINKLET :: End
+         if (Build.VERSION.SDK_INT >= 23) {
+             AudioFormat audioFormatObj = new AudioFormat.Builder()
+                     .setSampleRate(settings.getSampleRate())
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/internal/config/AudioSettingsAudioProfileResolver.java b/camera/camera-video/src/main/java/androidx/camera/video/internal/config/AudioSettingsAudioProfileResolver.java
+index 7d982c82..17f1b9eb 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/internal/config/AudioSettingsAudioProfileResolver.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/internal/config/AudioSettingsAudioProfileResolver.java
+@@ -25,6 +25,11 @@ import androidx.camera.video.AudioSpec;
+ import androidx.camera.video.internal.audio.AudioSettings;
+ import androidx.core.util.Supplier;
+ 
++// Change for THINKLET :: Start
++import ai.fd.thinklet.camerax.ThinkletAudioSettingsPatcher;
++import ai.fd.thinklet.camerax.ThinkletMic;
++// Change for THINKLET :: End
++
+ /**
+  * An {@link AudioSettings} supplier that resolves requested audio settings from an
+  * {@link AudioSpec} using an {@link AudioProfileProxy}.
+@@ -83,11 +88,35 @@ public final class AudioSettingsAudioProfileResolver implements Supplier<AudioSe
+                 + "AudioProfile: " + resolvedSampleRate + "Hz. [AudioProfile sample rate: "
+                 + audioProfileSampleRate + "Hz]");
+ 
+-        return AudioSettings.builder()
++        // Change for THINKLET :: Start
++        AudioSettings defaultAudioSettings = AudioSettings.builder()
++                // Change for THINKLET :: End
+                 .setAudioSource(resolvedAudioSource)
+                 .setAudioFormat(resolvedSourceFormat)
+                 .setChannelCount(resolvedChannelCount)
+                 .setSampleRate(resolvedSampleRate)
+                 .build();
++        // Change for THINKLET :: Start
++        ThinkletMic thinkletMic = mAudioSpec.getThinkletMic();
++        if (thinkletMic == null) {
++            return defaultAudioSettings;
++        }
++        ThinkletAudioSettingsPatcher patcher = thinkletMic.getAudioSettingsPatcher();
++        AudioSettings.Builder thinkletAudioSettingBuilder;
++        if (patcher == null) {
++            thinkletAudioSettingBuilder = defaultAudioSettings.toBuilder();
++        } else {
++            thinkletAudioSettingBuilder = AudioSettings.builder()
++                    .setAudioSource(patcher.getAudioSource(defaultAudioSettings.getAudioSource()))
++                    .setAudioFormat(patcher.getAudioFormat(defaultAudioSettings.getAudioFormat()))
++                    .setChannelCount(
++                            patcher.getChannelCount(defaultAudioSettings.getChannelCount()))
++                    .setSampleRate(patcher.getSampleRate(mAudioSpec.getSampleRate(),
++                            defaultAudioSettings.getSampleRate()));
++        }
++        return thinkletAudioSettingBuilder
++                .setThinkletAudioRecordWrapperFactory(thinkletMic.getAudioRecordWrapperFactory())
++                .build();
++        // Change for THINKLET :: End
+     }
+ }
+-- 
+2.25.1
+

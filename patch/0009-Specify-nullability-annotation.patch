@@ -1,0 +1,29 @@
+From 7bbae1b5fd7c10c8846b1494c3abd7c51103477f Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sun, 1 Sep 2024 02:27:43 +0900
+Subject: [PATCH 09/11] Specify nullability annotation
+
+Change-Id: Ic0a9074f6cf22cb6f931960ba5d4aa05c6266505
+---
+ .../camera/video/audio/wrapper/DefaultAudioRecordWrapper.java  | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
+index 86ebcd39..359020ce 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/audio/wrapper/DefaultAudioRecordWrapper.java
+@@ -20,9 +20,10 @@ import java.util.concurrent.Executor;
+  */
+ public class DefaultAudioRecordWrapper extends AudioRecordWrapper {
+ 
++    @NonNull
+     private final AudioRecord audioRecord;
+ 
+-    public DefaultAudioRecordWrapper(AudioRecord audioRecord) {
++    public DefaultAudioRecordWrapper(@NonNull AudioRecord audioRecord) {
+         this.audioRecord = audioRecord;
+     }
+ 
+-- 
+2.25.1
+
