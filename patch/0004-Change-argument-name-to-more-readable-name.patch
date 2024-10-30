@@ -1,0 +1,33 @@
+From b8d4dab8f35adf0b77926a86dad358680353dbc7 Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sat, 31 Aug 2024 23:49:33 +0900
+Subject: [PATCH 04/11] Change argument name to more readable name
+
+Change-Id: I63fa979288cd381be27c6f603f3ed855ebff4205
+---
+ .../fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+index c0b33255..e76bba93 100644
+--- a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+@@ -9,11 +9,11 @@ import androidx.annotation.NonNull;
+  * mode.
+  */
+ public interface ThinkletAudioSettingsPatcher {
+-    int getAudioSource(int defaultSetting);
++    int getAudioSource(int defaultAudioSource);
+ 
+-    int getAudioFormat(int defaultSetting);
++    int getAudioFormat(int defaultAudioFormat);
+ 
+-    int getChannelCount(int defaultSetting);
++    int getChannelCount(int defaultChannelCount);
+ 
+-    int getSampleRate(@NonNull Range<Integer> audioSpecRange, int defaultSetting);
++    int getSampleRate(@NonNull Range<Integer> audioSpecRange, int defaultSampleRate);
+ }
+-- 
+2.25.1
+

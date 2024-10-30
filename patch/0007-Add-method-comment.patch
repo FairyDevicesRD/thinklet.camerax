@@ -1,0 +1,29 @@
+From 93a2f73805a9ceebf9d14b9da7f31e7923839a7e Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sun, 1 Sep 2024 02:23:26 +0900
+Subject: [PATCH 07/11] Add method comment
+
+Change-Id: Ic4666045fb1173c4e3dc40e3240e44947ff45d29
+---
+ .../src/main/java/androidx/camera/video/Recorder.java        | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+index ffb807fd..fc4ceebb 100644
+--- a/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
++++ b/camera/camera-video/src/main/java/androidx/camera/video/Recorder.java
+@@ -3579,6 +3579,11 @@ public final class Recorder implements VideoOutput {
+         }
+ 
+         // Change for THINKLET :: Start
++        /**
++         * Sets the custom mic strategy for THINKLET.
++         *
++         * @param thinkletMic The {@link ThinkletMic} object with mic extensions defined.
++         */
+         @NonNull
+         public Builder setThinkletMic(@NonNull ThinkletMic thinkletMic) {
+             mMediaSpecBuilder.configureAudio(builder -> builder.setThinkletMic(thinkletMic));
+-- 
+2.25.1
+

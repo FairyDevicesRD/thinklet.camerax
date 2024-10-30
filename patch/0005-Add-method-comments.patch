@@ -1,0 +1,59 @@
+From 03273352e21a034c3f9d6f515f0800a68f8caee6 Mon Sep 17 00:00:00 2001
+From: Tamaki Hidetsugu <git@ralph.ms>
+Date: Sat, 31 Aug 2024 23:52:37 +0900
+Subject: [PATCH 05/11] Add method comments
+
+Change-Id: I313c0d024e6845f6e3c9ab57c427bb5b627b8237
+---
+ .../camerax/ThinkletAudioSettingsPatcher.java | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+index e76bba93..82d55452 100644
+--- a/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
++++ b/camera/camera-video/src/main/java/ai/fd/thinklet/camerax/ThinkletAudioSettingsPatcher.java
+@@ -9,11 +9,41 @@ import androidx.annotation.NonNull;
+  * mode.
+  */
+ public interface ThinkletAudioSettingsPatcher {
++
++    /**
++     * Specifies a specific {@link android.media.MediaRecorder.AudioSource｝ for the
++     * THINKLET specific audio functions used by this implementation class.
++     *
++     * @param defaultAudioSource Default settings provided on the CameraX side.
++     * @return {@link android.media.MediaRecorder.AudioSource｝ to use.
++     */
+     int getAudioSource(int defaultAudioSource);
+ 
++    /**
++     * Specifies a specific {@link android.media.AudioFormat｝ for the THINKLET specific audio
++     * functions used by this implementation class.
++     *
++     * @param defaultAudioFormat Default settings provided on the CameraX side.
++     * @return {@link android.media.AudioFormat｝ to use.
++     */
+     int getAudioFormat(int defaultAudioFormat);
+ 
++    /**
++     * Specifies a specific channel count for the THINKLET specific audio functions used by this
++     * implementation class.
++     *
++     * @param defaultChannelCount Default settings provided on the CameraX side.
++     * @return Number of audio channels to use in recording.
++     */
+     int getChannelCount(int defaultChannelCount);
+ 
++    /**
++     * Specifies a specific sample rate for the THINKLET specific audio functions used by this
++     * implementation class.
++     *
++     * @param audioSpecRange    The range of available sampling rates specified on the CameraX side.
++     * @param defaultSampleRate Default settings provided on the CameraX side.
++     * @return Number of sampling rate to be used for recording in Hz unit.
++     */
+     int getSampleRate(@NonNull Range<Integer> audioSpecRange, int defaultSampleRate);
+ }
+-- 
+2.25.1
+
