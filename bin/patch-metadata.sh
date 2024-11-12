@@ -32,7 +32,7 @@ if !(type "mvn" > /dev/null 2>&1); then
   exit 1
 fi
 
-find . -type f -name "*.pom" -print0 | xargs gsed -i -e "s/^  <groupId>androidx.camera/  <groupId>ai.fd.thinklet/" -e "s/<artifactId>camera-video/<artifactId>camerax-camera-video/"
-find . -type f -name "*.module" -print0 | xargs gsed -i -e "s/^    \"group\": \"androidx.camera/    \"group\": \"ai.fd.thinklet/" -e "s/\"camera-video/\"camerax-camera-video/"
+find . -type f -name "*.pom" -print0 | xargs --null -I {} bash -c 'ssed -i -e "s/^  <groupId>androidx.camera/  <groupId>ai.fd.thinklet/" -e "s/<artifactId>camera-video/<artifactId>camerax-camera-video/" "$@"' _ {}
+find . -type f -name "*.module" -print0 | xargs --null -I {} bash -c 'ssed -i -e "s/^    \"group\": \"androidx.camera/    \"group\": \"ai.fd.thinklet/" -e "s/\"camera-video/\"camerax-camera-video/" "$@"' _ {}
 
 echo "Patched to maven metadata."
