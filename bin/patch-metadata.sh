@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
-
+function ssed() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    gsed "$@"
+  else
+    sed "$@"
+  fi
+}
+export -f ssed
 if [ $# -eq 1 ]; then
   cd "$1"
 else
